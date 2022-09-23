@@ -14,3 +14,8 @@ X OLD - DO NOT USE export FLASK_ENV=development
 ```
 
 - 'FLASK_ENV' is deprecated and will not be used in Flask 2.3. Use 'FLASK_DEBUG' instead.
+
+
+4. Start to structure app with app folder 
+
+5. run.py and app package all that is needed
