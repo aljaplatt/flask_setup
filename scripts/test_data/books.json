@@ -1,0 +1,44 @@
+[
+    {   
+        "_id": "83943218-232c-11ed-9a59-beb2bf7533dc",
+        "title":"The Book Thief",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Markus Zusak",
+        "genre": "fiction"
+    }, 
+    {
+        "_id": "839576be-232c-11ed-9a59-beb2bf7533dc",
+        "title":"Pride and Prejudice",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Jane Austen",
+        "genre": "historical fiction"
+    },
+    {
+        "_id": "8395bb7e-232c-11ed-9a59-beb2bf7533dc",
+        "title":"Half of a Yellow Sun",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Chimamanda Adichie",
+        "genre": "historical"
+    },
+    {
+        "_id": "8395bb9e-232c-11ed-9a59-beb2bf7533dc",
+        "title":"Things Fall Apart",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Chinua Achebe",
+        "genre": "fiction"
+    },
+    {
+        "_id": "83960732-232c-11ed-9a59-beb2bf7533dc",
+        "title":"A Fine Balance",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Rohinton Mistry",
+        "genre": "historical drama"
+    },
+    {
+        "_id": "8396280c-232c-11ed-9a59-beb2bf7533dc",
+        "title":"Persuasion",
+        "synopsis":"The novel follows the character development of...",
+        "author":"Jane Austen",
+        "genre": "historical"
+    }
+]
