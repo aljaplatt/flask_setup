@@ -1,0 +1,425 @@
+openapi: 3.0.0
+info:
+  description: "An API that allows users to obtain information of existing books or add information of new books."
+  contact:
+    name: Alex Platt,  Hajara Iyal
+    email: alex.platt@methods.co.uk
+  license:
+    name: MIT
+    url: https://license.md/licenses/mit-license/
+  termsOfService: https://smartbear.com/terms-of-use/
+  title: Electronic Library
+  version: "1.0"
+servers:
+  - url: http://electrolibrary.com
+    description: Production server
+tags:
+  - name: "Public"
+  - name: "Private"
+paths:
+  /books:
+  
+    post:
+      tags:
+        - "Private"
+      description: Create a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBook'
+      responses:
+        "201":
+          description: Successfully Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+          
+    get:
+      tags:
+        - "Public"
+      description: Retrieves a list of books
+      parameters: 
+      - $ref: '#/components/parameters/Offset'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Books'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /books/{id}:
+    get:
+      tags:
+        - "Public"
+      description: Retrieve a single book
+      parameters:
+        - $ref: '#/components/parameters/BookID'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - "Public"
+      description: Updates a single book status
+      parameters:
+        - $ref: '#/components/parameters/BookID'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateBookStatus'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - "Private"
+      description: Delete a single book
+      parameters:
+        - $ref: '#/components/parameters/BookID'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /books/{id}/reservations:
+    post:
+        tags:
+        - "Public"
+        description: Create a new reservation for a book
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReservation'
+        parameters:
+        - $ref: '#/components/parameters/BookID'
+        responses:
+          '201':
+             description: Success
+             content:
+               application/json:
+                schema:
+                  $ref: '#/components/schemas/Reservation'
+          '400': 
+            $ref: '#/components/responses/BadRequest'
+          '500':
+            $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags:
+      - "Public"
+      description: Retrieve a list of reservations for a single book
+      parameters:
+      - $ref: '#/components/parameters/BookID'
+      - $ref: '#/components/parameters/Offset'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+           description: OK
+           content:
+             application/json:
+              schema:
+                $ref: '#/components/schemas/Reservations'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /books/{id}/reservations/{reservation_id}:
+    get:
+      tags:
+      - "Public"
+      description: Retrieve a reservation infromation for a book
+      parameters: 
+        - $ref: '#/components/parameters/BookID'
+        - $ref: '#/components/parameters/ReservationID'
+      responses:
+        '200':
+          description: Successful query of reservations data
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404': 
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+      - "Public"
+      description: Update reservation information for a book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservation'
+      parameters: 
+        - $ref: '#/components/parameters/BookID'
+        - $ref: '#/components/parameters/ReservationID'
+      responses:
+        '200':
+          description: Successful update of reservations data
+          content:
+            application/json: 
+              schema:
+                type: string
+                example: Reservation updated
+        '404': 
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  parameters:
+    ReservationID:
+      in: path
+      name: reservation_id
+      description: Unique identifier of the reservation resource
+      required: true
+      schema:
+        type: string
+        minLength: 36
+        maxLength: 36
+        example: 'dfc9815c-0840-11ed-9ca5-beb2bf7533dc'
+    BookID:
+      in: path
+      name: id
+      description: Unique identifier of the book resource
+      required: true
+      schema:
+        type: string
+        minLength: 36
+        maxLength: 36
+        example: "dfc9815c-0840-11ed-9ca5-beb2bf7533dc"
+    Offset:
+      in: query
+      name: offset
+      description: The number of items to skip before starting to collect the result set
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+        maximum: 1000
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 20
+        minimum: 0
+        maximum: 100
+      description: The numbers of items to return
+  schemas:
+    CreateBook:
+      description: The schema for creating a book
+      required: [
+        author,
+        title
+      ]
+      type: object
+      properties:
+        author:
+          type: string
+          description: The name of the author.
+          example: "John Steinbeck"
+        genre:
+          type: string
+          description: The book category
+          example: Fiction
+        title:
+          type: string
+          description: The title of the book
+          example: "East of Eden"
+        synopsis:
+          type: string
+          description: A brief summary of the book.
+          example: Set in the rich farmland of California's Salinas Valley, this sprawling and often brutal novel follows the intertwined destinies of two families—the Trasks and the Hamiltons—whose generations helplessly reenact the fall of Adam and Eve and the poisonous rivalry of Cain and Abel.
+    Books:
+      description: The schema of a list of books
+      required: [
+        total_count
+      ]
+      type: object
+      properties:
+        total_count:
+          type: integer
+          description: The number of books returned
+          example: 1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+    Book:
+      description: The schema of a single book
+      required: [
+        author,
+        id,
+        links,
+        title,
+        status
+      ]
+      type: object
+      properties:
+        author:
+          type: string
+          description: The name of the author.
+          example: "John Steinbeck"
+        genre:
+          type: string
+          description: The book category
+          example: Fiction
+        id:
+          type: string
+          description: The book id
+          example: "123"
+        links:
+          type: object
+          properties:
+            reservations:
+              $ref: '#/components/schemas/ReservationsLink'
+            reviews:
+              $ref: '#/components/schemas/ReviewsLink'
+            self:
+              $ref: '#/components/schemas/SelfLink'
+        status:
+          type: string
+          description: Current availability status of book
+          example: available
+        synopsis:
+          type: string
+          description: A brief summary of the book.
+          example: Set in the rich farmland of California's Salinas Valley, the novel follows the destinies of two families—the Trasks and the Hamiltons.
+        title:
+          type: string
+          description: The title of the book
+          example: "East of Eden"
+    UpdateBookStatus:
+      description: The schema for updating a book status.
+      required: [
+        state
+      ]
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'deleted'
+    CreateReservation:
+      description: The schema for creating a reservation on a book
+      required: [
+        forenames,
+        surname
+      ]
+      type: object
+      properties:
+        forenames:
+          type: string
+          example: 'Marty'
+        surname:
+          type: string
+          example: 'McFly'
+    Reservations:
+      description: The schema of a list of reservations for a book
+      type: object
+      properties:
+        total_count:
+          type: integer
+          description: The number of reservations for the specified book
+          example: 1
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/Reservation'
+    Reservation:
+      description: The schema of a reservation for a book
+      type: object
+      properties:
+        book_id:
+          type: string
+          example: '123-456-4tf'
+        id:
+          type: string
+          example: '103-556-4xf'
+        links:
+          type: object
+          properties:
+            book:
+              $ref: '#/components/schemas/BookLink'
+            self:
+              $ref: '#/components/schemas/SelfLink'
+        state:
+          type: string
+          example: 'reserved'
+        user:
+          type: object
+          properties:
+            forenames:
+              type: string
+              example: 'Marty'
+            surname:
+              type: string
+              example: 'McFly'
+    BookLink:
+      type: string
+      description: A link to the URL to the book associated with resource
+      example: http://electrolibrary.com/books/7
+    ReservationsLink:
+      type: string
+      description: A link to a list of reservations for a book
+      example: http://electrolibrary.com/books/7/reservations
+    ReviewsLink:
+      type: string
+      description: A link to a list of reviews for a book
+      example: http://electrolibrary.com/books/7/reviews
+    SelfLink:
+      type: string
+      description: A link that generated the current resource
+  responses:
+    NoContent:
+      description: No Content
+    BadRequest:
+      description: Bad request
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: All fields are mandatory
+    NotFound:
+      description: Not Found Error
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Could not connect to database
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Could not connect to database

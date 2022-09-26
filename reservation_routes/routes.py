@@ -8,7 +8,7 @@ from res_models.models import (
 )
 from helpers.helper import get_args, validate_sort, sort_reservations
 
-reservation_req = Blueprint("reservations", __name__)
+reservation_req = Blueprint("reservation_req", __name__)
 
 
 @reservation_req.route("/<book_id>/reservations", methods=["POST"])

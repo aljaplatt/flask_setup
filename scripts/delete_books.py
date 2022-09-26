@@ -1,6 +1,14 @@
 from dbconfig.mongo import db
 import sys
 
+import os
+try:
+    user_paths = os.environ['PYTHONPATH'].split(os.pathsep)
+    print('UP: ',user_paths)
+except KeyError:
+    user_paths = []
+
+
 
 def check_db():
     try:

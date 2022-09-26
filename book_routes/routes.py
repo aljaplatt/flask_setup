@@ -11,8 +11,8 @@ from book_models.models import (
 )
 from helpers.helper import get_args, validate_sort, sort_books
 
-# this could be in app.routes and imported here ? Tried didnt work, something to come back to.
-book_req = Blueprint("book", __name__)
+# 1. name for obj, pass in the name of the module being loaded - routes.py
+book_req = Blueprint("book_req", __name__)
 
 # get list of all books from db
 @book_req.route("/")
