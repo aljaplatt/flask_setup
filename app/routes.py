@@ -1,7 +1,7 @@
 from app import app
-from books.book_routes import book_req
+from book_routes.routes import book_req
 # change to reservations.reservations
-from reservations.reservation_routes import reservation_req
+from reservation_routes.routes import reservation_req
 
 
  # Register Blueprints - tell our Flask app that this blueprint and its routes exist
